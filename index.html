@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LendingMaster Pro | Financial Suite v6.1</title>
+    <title>LendingMaster Pro | Financial Suite v6.5</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -19,11 +19,11 @@
     <style>
         :root {
             /* PROFESSIONAL VIBRANT PALETTE */
-            --bg-dark: #0f111a;       
-            --bg-panel: #161b2c;       
+            --bg-dark: #0f111a;        
+            --bg-panel: #161b2c;        
             --bg-input: #1f2940;
             
-            --primary: #3b82f6;       
+            --primary: #3b82f6;        
             --primary-vibrant: #2563eb;
             --primary-glow: rgba(59, 130, 246, 0.5);
             
@@ -31,8 +31,7 @@
             --text-muted: #94a3b8;    
             
             --success: #10b981;
-            --danger: #ef4444; /* VIBRANT RED */
-            --danger-hover: #dc2626;
+            --danger: #ef4444; 
             --warning: #f59e0b;
         }
 
@@ -42,6 +41,17 @@
             color: var(--text-main);
             overflow-x: hidden;
             min-height: 100vh;
+            
+            /* --- ANTI-FLICKER FIX --- */
+            /* Forces scrollbar to always exist so page doesn't jump */
+            overflow-y: scroll !important; 
+            padding-right: 0 !important;
+        }
+
+        /* Ensure modal opening doesn't override this */
+        body.modal-open {
+            overflow-y: scroll !important;
+            padding-right: 0 !important;
         }
 
         /* --- GLASS & CARDS --- */
@@ -70,7 +80,7 @@
         .border-yellow::before { background: var(--warning); }
         .border-red::before { background: var(--danger); }
 
-        .stat-value { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; margin-top: 5px; }
+        .stat-value { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; }
 
         /* --- INPUTS --- */
@@ -101,16 +111,20 @@
         }
         .btn-primary-pro:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5); }
         
-        /* White Create Account Button */
         .btn-white-pro {
-            background: white;
-            color: var(--bg-dark);
+            background: #ffffff;
+            color: #0f111a;
             border: none; padding: 12px 20px;
-            border-radius: 8px; font-weight: 700;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+            border-radius: 8px; font-weight: 800;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
             transition: all 0.3s;
         }
-        .btn-white-pro:hover { background: #f0f0f0; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2); }
+        .btn-white-pro:hover { 
+            background: #f0f0f0; 
+            color: black;
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4); 
+        }
 
         /* --- ANIMATED DELETE BUTTON --- */
         @keyframes shake {
@@ -155,12 +169,11 @@
             width: 100%; max-width: 450px; padding: 40px; text-align: center;
         }
         
-        /* Steps in Registration */
         .step-indicator { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
         .step-title { color: white; font-weight: 700; margin-bottom: 15px; }
 
         /* --- TABLE & LISTS --- */
-        .custom-table th { background: #111521; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .custom-table th { background: #111521; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); white-space: nowrap; }
         .custom-table td { background: var(--bg-panel); padding: 15px; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .custom-table tr:hover td { background: #1c233a; cursor: pointer; }
 
@@ -181,7 +194,7 @@
         .modal-header { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .btn-close { filter: invert(1); }
         
-        /* --- HISTORY FILTERS --- */
+        /* --- HISTORY FILTERS & DATES --- */
         .history-filter-select {
             background-color: var(--bg-dark);
             border: 1px solid rgba(255,255,255,0.1);
@@ -190,8 +203,21 @@
             padding: 8px 12px;
             border-radius: 6px;
         }
+        /* New class for visible date */
+        .history-date {
+            color: rgba(255, 255, 255, 0.6) !important; 
+            font-size: 0.75rem;
+        }
 
         .hidden { display: none !important; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .stat-value { font-size: 1.4rem; }
+            .modal-dialog { margin: 10px; }
+            .col-md-5, .col-md-7 { width: 100%; }
+            .history-filter-select { font-size: 0.75rem; padding: 6px; }
+        }
     </style>
 </head>
 <body>
@@ -207,7 +233,7 @@
                 <i class="fas fa-hand-holding-dollar fa-3x text-primary"></i>
             </div>
             <h2 class="fw-bold text-white mb-1">LendingMaster</h2>
-            <p class="text-muted small mb-4">Financial Management Suite v6.1</p>
+            <p class="text-muted small mb-4">Financial Management Suite v6.5</p>
 
             <div id="login-form">
                 <div class="text-start mb-3">
@@ -414,8 +440,7 @@
                             <label class="stat-label text-success mb-2">Add Payment</label>
                             <div class="d-flex gap-2 mb-2">
                                 <input type="number" id="p-pay-amount" class="form-control" placeholder="Amount">
-                                <input type="date" id="p-pay-date" class="form-control" style="width: 60px;">
-                            </div>
+                                <input type="date" id="p-pay-date" class="form-control" style="width: 140px;"> </div>
                             <button class="btn-primary-pro w-100 mb-4" style="background: var(--success);" onclick="executePayment()">Submit Payment</button>
 
                             <hr class="border-white opacity-10">
@@ -440,7 +465,7 @@
                                         <option value="payment">Payments</option>
                                         <option value="penalty">Penalties</option>
                                     </select>
-                                    <input type="date" id="historyFilterDate" class="history-filter-select" style="width: 110px;" onchange="renderHistory()">
+                                    <input type="date" id="historyFilterDate" class="history-filter-select" style="width: 130px;" onchange="renderHistory()">
                                 </div>
                             </div>
                             <div style="height: 350px; overflow-y: auto;" id="p-history-list"></div>
@@ -481,6 +506,13 @@
         let currentProfileId = null;
         let chart1, chart2;
 
+        // --- HELPER: Date Formatter ---
+        window.formatDate = (dateString) => {
+            if (!dateString) return 'N/A';
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
         // --- DEMO LOGIC ---
         window.startDemo = () => {
             const blocked = localStorage.getItem('demoBlocked');
@@ -498,8 +530,8 @@
             
             // Initial Mock Data for Demo
             loanData = [
-                {id: 'demo1', name: 'Demo User 1', balance: 500, initialLoan: 1000, interest: 200, totalLoan: 1200, loanDate: '2023-01-01', payments: []},
-                {id: 'demo2', name: 'Demo User 2', balance: 0, initialLoan: 500, interest: 50, totalLoan: 550, loanDate: '2023-01-02', payments: []}
+                {id: 'demo1', name: 'Demo User 1', balance: 500, initialLoan: 1000, interest: 200, totalLoan: 1200, loanDate: '2025-12-10', payments: []},
+                {id: 'demo2', name: 'Demo User 2', balance: 0, initialLoan: 500, interest: 50, totalLoan: 550, loanDate: '2025-12-11', payments: []}
             ];
             renderAll();
 
@@ -608,6 +640,15 @@
             unsubscribeLoans = onSnapshot(loansRef, (snapshot) => {
                 loanData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderAll();
+                
+                // If profile modal is open, refresh it without closing
+                if (currentProfileId) {
+                    const loan = loanData.find(l => l.id === currentProfileId);
+                    if(loan) {
+                        updateProfileUI(loan.name, loan.loanDate, loan.balance);
+                        renderHistory();
+                    }
+                }
             });
         }
 
@@ -640,7 +681,10 @@
         window.executePayment = async () => {
             const amount = parseFloat(document.getElementById('p-pay-amount').value);
             const date = document.getElementById('p-pay-date').value;
-            if(!amount || !date) return;
+            if(!amount || !date) {
+                 Swal.fire({icon:'warning', title:'Required', text:'Please enter amount and date', background:'#161b2c', color:'white'});
+                 return;
+            }
 
             const loan = loanData.find(l => l.id === currentProfileId);
             const newBalance = loan.balance - amount;
@@ -655,11 +699,12 @@
             } else {
                 loan.balance = newBalance;
                 loan.payments = updatedPayments;
+                // For demo, manually trigger UI refresh
+                updateProfileUI(loan.name, loan.loanDate, newBalance);
+                renderHistory();
+                renderAll();
             }
             
-            // Optimistic UI Update (No flicker)
-            updateProfileUI(loan.name, loan.loanDate, newBalance);
-            renderHistory();
             document.getElementById('p-pay-amount').value = '';
         };
 
@@ -670,7 +715,9 @@
             const loan = loanData.find(l => l.id === currentProfileId);
             const newBalance = loan.balance + amount;
             const newTotal = loan.totalLoan + amount;
-            const newPenalty = { amount, date: new Date().toISOString().split('T')[0], type: 'penalty' };
+            // Use current date for penalty if not specified, or today
+            const today = new Date().toISOString().split('T')[0];
+            const newPenalty = { amount, date: today, type: 'penalty' };
             const updatedPayments = [...(loan.payments || []), newPenalty];
 
             if(currentUser) {
@@ -683,11 +730,12 @@
                 loan.balance = newBalance;
                 loan.totalLoan = newTotal;
                 loan.payments = updatedPayments;
+                // For demo
+                updateProfileUI(loan.name, loan.loanDate, newBalance);
+                renderHistory();
+                renderAll();
             }
 
-            // Optimistic UI Update (No flicker)
-            updateProfileUI(loan.name, loan.loanDate, newBalance);
-            renderHistory();
             document.getElementById('p-penalty-amount').value = '';
         };
 
@@ -711,7 +759,7 @@
         // --- RENDERING ---
         window.renderAll = () => {
             const tbody = document.getElementById('utangListBody');
-            tbody.innerHTML = '';
+            let rowsHtml = '';
             
             let totalRec = 0, totalCol = 0, totalCap = 0, totalInt = 0;
 
@@ -726,9 +774,9 @@
                 const percent = ((loan.totalLoan - loan.balance) / loan.totalLoan) * 100;
                 const status = loan.balance <= 0 ? '<span class="badge bg-success">CLEARED</span>' : '<span class="badge bg-primary">ACTIVE</span>';
 
-                tbody.innerHTML += `
+                rowsHtml += `
                     <tr onclick="openProfile('${loan.id}')">
-                        <td><div class="fw-bold text-white">${loan.name}</div><small class="text-muted">${loan.loanDate}</small></td>
+                        <td><div class="fw-bold text-white">${loan.name}</div><small class="text-muted">${window.formatDate(loan.loanDate)}</small></td>
                         <td>${status}</td>
                         <td width="30%">
                             <div class="progress" style="height:6px; background:rgba(255,255,255,0.1)">
@@ -739,6 +787,8 @@
                     </tr>
                 `;
             });
+            
+            tbody.innerHTML = rowsHtml; // Bulk update to prevent flicker
 
             document.getElementById('summaryTotalBalance').innerText = '₱' + totalRec.toLocaleString();
             document.getElementById('summaryTotalPaid').innerText = '₱' + totalCol.toLocaleString();
@@ -752,18 +802,22 @@
             currentProfileId = id;
             const loan = loanData.find(l => l.id === id);
             
+            // Set payment date picker default to TODAY
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('p-pay-date').value = today;
+
             // Reset Filters
             document.getElementById('historyFilterType').value = 'all';
             document.getElementById('historyFilterDate').value = '';
             
             updateProfileUI(loan.name, loan.loanDate, loan.balance);
-            renderHistory(); // Render with initial filters
+            renderHistory(); 
             new bootstrap.Modal(document.getElementById('profileModal')).show();
         };
 
         function updateProfileUI(name, date, balance) {
             document.getElementById('p-name').innerText = name;
-            document.getElementById('p-date').innerText = date;
+            document.getElementById('p-date').innerText = window.formatDate(date);
             document.getElementById('p-balance').innerText = '₱' + balance.toLocaleString();
         }
 
@@ -790,11 +844,12 @@
             
             history.forEach(p => {
                 const isPay = p.type === 'payment';
+                // UPDATED: Used 'history-date' class for better visibility
                 list.innerHTML += `
                     <div class="d-flex justify-content-between p-3 mb-2 rounded" style="background:rgba(255,255,255,0.03); border-left: 3px solid ${isPay ? '#10b981' : '#ef4444'}">
                         <div>
                             <div class="fw-bold text-white">${isPay ? 'Payment Received' : 'Penalty Added'}</div>
-                            <small class="text-muted">${p.date}</small>
+                            <small class="history-date">${window.formatDate(p.date)}</small>
                         </div>
                         <div class="fw-bold ${isPay ? 'text-success' : 'text-danger'}">
                             ${isPay ? '+' : '+'}₱${p.amount.toLocaleString()}
@@ -886,7 +941,7 @@
             // --- 3. BORROWER LIST (Main Table) ---
             const rows = loanData.map(u => [
                 u.name,
-                u.loanDate,
+                window.formatDate(u.loanDate),
                 formatNumber(u.totalLoan),
                 formatNumber(u.totalLoan - u.balance), 
                 formatNumber(u.balance)
