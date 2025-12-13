@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LendingMaster Pro | Financial Suite v6.5</title>
+    <title>LendingMaster Pro | Financial Suite v8.1 (Green Date)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
 
@@ -15,6 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        /* --- CORE VARIABLES --- */
         :root {
             --bg-dark: #0f111a;         
             --bg-panel: #161b2c;        
@@ -22,14 +24,13 @@
             
             --primary: #3b82f6;         
             --primary-vibrant: #2563eb;
-            --primary-glow: rgba(59, 130, 246, 0.5);
-            
             --text-main: #ffffff;      
             --text-muted: #94a3b8;     
             
             --success: #10b981;
             --danger: #ef4444; 
             --warning: #f59e0b;
+            --info: #06b6d4;
         }
 
         body {
@@ -38,188 +39,202 @@
             color: var(--text-main);
             overflow-x: hidden;
             min-height: 100vh;
-            /* Prevent scrolling issues */
             overscroll-behavior-y: none;
         }
 
-        /* --- GLASS & CARDS --- */
+        /* --- BACKGROUND ANIMATION --- */
+        .animated-bg {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: -1;
+            background: var(--bg-dark);
+            overflow: hidden;
+        }
+        .blob {
+            position: absolute; 
+            border-radius: 50%; 
+            filter: blur(80px); 
+            opacity: 0.6;
+            animation: float 10s infinite alternate;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(59, 130, 246, 0.25); }
+        .blob-2 { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: rgba(16, 185, 129, 0.15); animation-delay: -5s; }
+        
+        @keyframes float { 
+            0% { transform: translate(0, 0) scale(1); } 
+            100% { transform: translate(20px, 40px) scale(1.1); } 
+        }
+
+        /* --- GLASS PANELS --- */
         .glass-panel {
-            background: rgba(22, 27, 44, 0.95);
+            background: rgba(22, 27, 44, 0.8);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
         }
 
-        /* --- WHITE MODE FOR REGISTRATION (Requested Fix) --- */
+        /* --- LOGIN PAGE STYLING --- */
+        .login-card {
+            width: 100%; 
+            max-width: 420px; 
+            padding: 45px 35px; 
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
+        .login-card h2 { color: #ffffff !important; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .login-card p.small { color: rgba(255,255,255,0.9) !important; font-weight: 500; }
+        .login-card label { color: #ffffff !important; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; }
+        
+        .login-input {
+            background: rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
+            border-radius: 12px !important;
+            padding: 14px 18px !important;
+            font-size: 1rem !important;
+            transition: 0.3s all;
+        }
+        .login-input:focus {
+            background: rgba(0, 0, 0, 0.6) !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.25) !important;
+        }
+        .login-input::placeholder { color: rgba(255,255,255,0.5) !important; }
+        .glow-icon { filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.8)); }
+
+        /* --- WHITE MODE (Register Only) --- */
         .glass-panel.white-mode {
             background: #ffffff !important;
             border: 1px solid #e2e8f0 !important;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1) !important;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15) !important;
         }
         .glass-panel.white-mode h2, 
         .glass-panel.white-mode h5, 
         .glass-panel.white-mode p, 
-        .glass-panel.white-mode label,
-        .glass-panel.white-mode .step-title {
-            color: #1e293b !important; /* Dark text */
+        .glass-panel.white-mode label, 
+        .glass-panel.white-mode .step-title { color: #1e293b !important; text-shadow: none !important; }
+        .glass-panel.white-mode .text-muted { color: #64748b !important; }
+        .glass-panel.white-mode input.form-control { 
+            background-color: #f1f5f9 !important; 
+            border: 1px solid #cbd5e1 !important; 
+            color: #0f172a !important; 
+            box-shadow: none !important; 
         }
-        .glass-panel.white-mode .text-muted {
-            color: #64748b !important;
-        }
-        /* Input styles specifically for White Mode */
-        .glass-panel.white-mode input.form-control {
-            background-color: #f1f5f9 !important;
-            border: 1px solid #cbd5e1 !important;
-            color: #0f172a !important;
-        }
-        .glass-panel.white-mode input.form-control:focus {
-            background-color: #ffffff !important;
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+        .glass-panel.white-mode input.form-control:focus { 
+            background-color: #ffffff !important; 
+            border-color: var(--primary) !important; 
         }
 
+        /* --- DASHBOARD ELEMENTS --- */
         .stat-card {
-            background: var(--bg-panel);
-            border-radius: 12px;
+            background: var(--bg-panel); 
+            border-radius: 12px; 
             padding: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.2s;
-            position: relative;
+            border: 1px solid rgba(255,255,255,0.05); 
+            transition: transform 0.2s; 
+            position: relative; 
             overflow: hidden;
         }
         .stat-card:hover { transform: translateY(-5px); border-color: rgba(59, 130, 246, 0.3); }
-        .stat-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-        }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
+        
         .border-blue::before { background: var(--primary); }
         .border-green::before { background: var(--success); }
         .border-yellow::before { background: var(--warning); }
         .border-red::before { background: var(--danger); }
+        .border-info::before { background: var(--info); }
 
         .stat-value { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; }
 
-        /* --- INPUTS (Dark Mode Default) --- */
+        /* --- INPUTS GENERAL --- */
         .form-control, .form-select {
-            background-color: var(--bg-input);
-            border: 1px solid rgba(255,255,255,0.1);
+            background-color: var(--bg-input); 
+            border: 1px solid rgba(255,255,255,0.1); 
             color: white;
-            padding: 12px 15px;
-            border-radius: 8px;
-            font-size: 0.95rem;
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            font-size: 0.9rem;
         }
         .form-control:focus, .form-select:focus {
-            background-color: #263350;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+            background-color: #263350; 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); 
             color: white;
         }
-        .form-control::placeholder { color: rgba(255,255,255,0.3); }
-        input[type="date"] { color-scheme: dark; }
+        input[type="date"], input[type="month"] { color-scheme: dark; }
 
         /* --- BUTTONS --- */
         .btn-primary-pro {
             background: linear-gradient(135deg, var(--primary), var(--primary-vibrant));
-            color: white; border: none; padding: 12px 20px;
-            border-radius: 8px; font-weight: 600;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-            transition: all 0.3s;
+            color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transition: all 0.3s;
         }
         .btn-primary-pro:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5); }
         
         .btn-white-pro {
-            background: #ffffff;
-            color: #0f111a;
-            border: none; padding: 12px 20px;
-            border-radius: 8px; font-weight: 800;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
-            transition: all 0.3s;
+            background: #ffffff; color: #0f111a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 800;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15); transition: all 0.3s;
         }
-        .btn-white-pro:hover { 
-            background: #f0f0f0; 
-            color: black;
-            transform: translateY(-2px); 
-            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4); 
-        }
+        .btn-white-pro:hover { background: #f0f0f0; color: black; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4); }
 
-        /* --- ANIMATED DELETE BUTTON --- */
         .btn-delete-animate {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: 1px solid var(--danger);
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 700;
-            transition: 0.3s;
+            background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger);
+            width: 100%; padding: 12px; border-radius: 8px; font-weight: 700; transition: 0.3s;
         }
-        .btn-delete-animate:hover {
-            background: var(--danger);
-            color: white;
-            box-shadow: 0 0 15px var(--danger);
-            cursor: pointer;
-        }
+        .btn-delete-animate:hover { background: var(--danger); color: white; box-shadow: 0 0 15px var(--danger); cursor: pointer; }
 
-        /* --- AUTH SECTION (Layout Fix) --- */
+        /* --- LAYOUTS --- */
         #auth-section {
-            min-height: 100vh; /* Changed from height to min-height for keyboard fix */
+            min-height: 100vh; 
             display: flex; 
             align-items: center; 
-            justify-content: center;
+            justify-content: center; 
             width: 100%; 
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15), transparent 70%);
-            padding: 20px; /* Add padding for small screens */
+            padding: 20px; 
+            position: relative; 
+            z-index: 10;
         }
-        .login-card {
-            width: 100%; max-width: 450px; padding: 40px; text-align: center;
-            transition: height 0.3s ease;
-        }
-        
         .step-indicator { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
         .step-title { color: white; font-weight: 700; margin-bottom: 15px; }
 
-        /* --- TABLE & LISTS --- */
         .custom-table th { background: #111521; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); white-space: nowrap; }
         .custom-table td { background: var(--bg-panel); padding: 15px; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .custom-table tr:hover td { background: #1c233a; cursor: pointer; }
 
-        /* --- TIMER --- */
         #demo-timer-bar {
-            position: fixed; bottom: 20px; right: 20px;
-            background: rgba(0,0,0,0.8); border: 1px solid var(--danger);
-            color: var(--danger); padding: 10px 20px; border-radius: 50px;
-            font-family: 'Courier New', monospace; font-weight: 700;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-            z-index: 2000; display: none; align-items: center; gap: 10px;
+            position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.8); border: 1px solid var(--danger);
+            color: var(--danger); padding: 10px 20px; border-radius: 50px; font-family: 'Courier New', monospace; font-weight: 700;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); z-index: 2000; display: none; align-items: center; gap: 10px;
         }
         .timer-icon { animation: pulse 1s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* --- MODAL --- */
+        /* --- MODALS --- */
         .modal-content { background-color: var(--bg-panel); border: 1px solid rgba(255,255,255,0.1); }
         .modal-header { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .btn-close { filter: invert(1); }
         
-        /* --- HISTORY FILTERS & DATES --- */
         .history-filter-select {
-            background-color: var(--bg-dark);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            padding: 8px 12px;
-            border-radius: 6px;
+            background-color: var(--bg-dark); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted);
+            font-size: 0.85rem; padding: 8px 12px; border-radius: 6px;
         }
-        /* New class for visible date */
-        .history-date {
-            color: rgba(255, 255, 255, 0.6) !important; 
-            font-size: 0.75rem;
-        }
-
+        .history-date { color: rgba(255, 255, 255, 0.6) !important; font-size: 0.75rem; }
         .hidden { display: none !important; }
 
-        /* Mobile Adjustments */
+        .filter-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .collection-breakdown-row .stat-card {
+            background: rgba(6, 182, 212, 0.05);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            padding: 15px;
+        }
+
         @media (max-width: 768px) {
             .stat-value { font-size: 1.4rem; }
             .modal-dialog { margin: 10px; }
@@ -231,6 +246,11 @@
 </head>
 <body>
 
+    <div class="animated-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
     <div id="demo-timer-bar">
         <i class="fas fa-clock timer-icon"></i>
         <span>DEMO ENDS IN: <span id="timer-countdown">01:00</span></span>
@@ -239,18 +259,18 @@
     <section id="auth-section">
         <div class="glass-panel login-card" id="main-auth-card">
             <div class="mb-4">
-                <i class="fas fa-hand-holding-dollar fa-3x text-primary"></i>
+                <i class="fas fa-hand-holding-dollar fa-3x text-primary glow-icon"></i>
             </div>
             <h2 class="fw-bold mb-1">LendingMaster</h2>
-            <p class="text-muted small mb-4">Financial Management Suite v6.5</p>
+            <p class="small mb-4">Financial Management Suite v8.1</p>
 
             <div id="login-form">
-                <div class="text-start mb-3">
-                    <label class="small text-muted mb-1">Account Access</label>
-                    <input type="email" id="email" class="form-control mb-3" placeholder="Email Address">
-                    <input type="password" id="password" class="form-control" placeholder="Password">
+                <div class="text-start mb-4">
+                    <label class="mb-2 ms-1">ACCOUNT ACCESS</label>
+                    <input type="email" id="email" class="form-control login-input mb-3" placeholder="Email Address">
+                    <input type="password" id="password" class="form-control login-input" placeholder="Password">
                 </div>
-                <button class="btn-primary-pro w-100 mb-3" onclick="handleLogin()">Secure Login</button>
+                <button class="btn-primary-pro w-100 mb-3" onclick="handleLogin()">SECURE LOGIN</button>
                 <div class="d-flex flex-column gap-2">
                     <button class="btn-white-pro w-100" onclick="showRegStep(1)">
                         <i class="fas fa-user-plus me-2"></i> Create Account
@@ -324,7 +344,7 @@
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="stat-card border-green">
-                        <div class="stat-label">Total Collected</div>
+                        <div class="stat-label">Overall Collected</div>
                         <div class="stat-value text-success" id="summaryTotalPaid">₱0</div>
                     </div>
                 </div>
@@ -338,6 +358,46 @@
                     <div class="stat-card border-red">
                         <div class="stat-label">Proj. Interest</div>
                         <div class="stat-value text-danger" id="summaryTotalInterest">₱0</div>
+                    </div>
+                </div>
+            </div>
+
+            <h6 class="text-white fw-bold mb-3 ms-1">Collection Performance</h6>
+            <div class="row g-3 mb-4 collection-breakdown-row">
+                
+                <div class="col-md-4 col-12">
+                    <label class="filter-label">Filter Daily</label>
+                    <input type="date" id="filterDayInput" class="form-control mb-2 text-center" onchange="renderCollectionStats()">
+                    <div class="stat-card border-info d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label text-info">Daily Collected</div>
+                            <div class="stat-value text-white" id="colDaily">₱0</div>
+                        </div>
+                        <i class="fas fa-calendar-day fa-2x text-info opacity-25"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-6">
+                    <label class="filter-label">Filter Monthly</label>
+                    <input type="month" id="filterMonthInput" class="form-control mb-2 text-center" onchange="renderCollectionStats()">
+                    <div class="stat-card border-info d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label text-info">Monthly Collected</div>
+                            <div class="stat-value text-white" id="colMonthly">₱0</div>
+                        </div>
+                        <i class="fas fa-calendar-alt fa-2x text-info opacity-25"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-6">
+                    <label class="filter-label">Filter Yearly</label>
+                    <input type="number" id="filterYearInput" class="form-control mb-2 text-center" placeholder="YYYY" min="2020" max="2030" onchange="renderCollectionStats()">
+                    <div class="stat-card border-info d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label text-info">Yearly Collected</div>
+                            <div class="stat-value text-white" id="colYearly">₱0</div>
+                        </div>
+                        <i class="fas fa-chart-line fa-2x text-info opacity-25"></i>
                     </div>
                 </div>
             </div>
@@ -508,21 +568,21 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- GLOBAL STATE ---
+        // --- GLOBAL VARIABLES ---
         let currentUser = null;
         let unsubscribeLoans = null;
         let loanData = [];
         let currentProfileId = null;
         let chart1, chart2;
 
-        // --- HELPER: Date Formatter ---
+        // --- HELPER FUNCTIONS ---
         window.formatDate = (dateString) => {
             if (!dateString) return 'N/A';
             const options = { year: 'numeric', month: 'short', day: 'numeric' };
             return new Date(dateString).toLocaleDateString('en-US', options);
         }
 
-        // --- DEMO LOGIC ---
+        // --- DEMO MODE LOGIC ---
         window.startDemo = () => {
             const blocked = localStorage.getItem('demoBlocked');
             if (blocked) {
@@ -530,7 +590,7 @@
                 return;
             }
 
-            const demoDuration = 60000; // 1 minute
+            const demoDuration = 60000; // 1 Minute
             localStorage.setItem('demoStart', Date.now());
             
             document.getElementById('auth-section').style.display = 'none';
@@ -542,6 +602,7 @@
                 {id: 'demo1', name: 'Demo User 1', balance: 500, initialLoan: 1000, interest: 200, totalLoan: 1200, loanDate: '2025-12-10', payments: []},
                 {id: 'demo2', name: 'Demo User 2', balance: 0, initialLoan: 500, interest: 50, totalLoan: 550, loanDate: '2025-12-11', payments: []}
             ];
+            initializeFilters();
             renderAll();
 
             const timerInterval = setInterval(() => {
@@ -561,27 +622,24 @@
             }, 1000);
         };
 
-        // --- AUTH & UI TOGGLE LOGIC (FIXED) ---
+        // --- AUTH UI HANDLERS ---
         window.showRegStep = (step) => {
             const card = document.getElementById('main-auth-card');
             
             if(step === 0) {
-                // Return to LOGIN (Dark Mode)
+                // Back to Login
                 document.getElementById('reg-container').classList.add('hidden');
                 document.getElementById('login-form').classList.remove('hidden');
-                
-                // Remove white mode classes
                 card.classList.remove('white-mode');
             } else {
-                // Go to REGISTER (White Mode)
+                // Go to Register
                 document.getElementById('login-form').classList.add('hidden');
                 document.getElementById('reg-container').classList.remove('hidden');
-                
-                // Add white mode classes
                 card.classList.add('white-mode');
-
-                // Handle steps visibility
+                
+                // Hide all steps first
                 [1, 2, 3].forEach(i => document.getElementById(`reg-step-${i}`).classList.add('hidden'));
+                // Show requested step
                 document.getElementById(`reg-step-${step}`).classList.remove('hidden');
             }
         };
@@ -601,15 +659,9 @@
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, password);
                 await setDoc(doc(db, "users", cred.user.uid), {
-                    email: email,
-                    gcashReference: ref,
-                    senderName: sender,
-                    senderMobile: mobile,
-                    status: 'pending',
-                    createdAt: new Date()
+                    email: email, gcashReference: ref, senderName: sender, senderMobile: mobile, status: 'pending', createdAt: new Date()
                 });
-                
-                Swal.fire({icon:'success', title:'Registered!', text:'Your account is pending activation. Please wait for Admin approval.', background:'#161b2c', color:'white'});
+                Swal.fire({icon:'success', title:'Registered!', text:'Wait for Admin approval.', background:'#161b2c', color:'white'});
                 showRegStep(0);
             } catch (error) {
                 Swal.fire({icon:'error', title:'Error', text: error.message, background:'#161b2c', color:'white'});
@@ -619,7 +671,6 @@
         window.handleLogin = async () => {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-
             try {
                 const cred = await signInWithEmailAndPassword(auth, email, password);
                 checkUserStatus(cred.user.uid);
@@ -654,13 +705,15 @@
         function initDashboard() {
             document.getElementById('auth-section').style.display = 'none';
             document.getElementById('dashboard-section').style.display = 'block';
+            
+            // Set default filters to today
+            initializeFilters();
 
             const loansRef = collection(db, `users/${currentUser}/loans`);
             unsubscribeLoans = onSnapshot(loansRef, (snapshot) => {
                 loanData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderAll();
                 
-                // If profile modal is open, refresh it without closing
                 if (currentProfileId) {
                     const loan = loanData.find(l => l.id === currentProfileId);
                     if(loan) {
@@ -671,7 +724,19 @@
             });
         }
 
-        // --- CRUD FUNCTIONS ---
+        // --- FILTER INITIALIZATION ---
+        function initializeFilters() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+
+            document.getElementById('filterDayInput').value = `${year}-${month}-${day}`;
+            document.getElementById('filterMonthInput').value = `${year}-${month}`;
+            document.getElementById('filterYearInput').value = year;
+        }
+
+        // --- LOAN CRUD FUNCTIONS ---
         window.addUtang = async () => {
             const name = document.getElementById('name').value;
             const principal = parseFloat(document.getElementById('initialLoan').value);
@@ -718,12 +783,10 @@
             } else {
                 loan.balance = newBalance;
                 loan.payments = updatedPayments;
-                // For demo
                 updateProfileUI(loan.name, loan.loanDate, newBalance);
                 renderHistory();
                 renderAll();
             }
-            
             document.getElementById('p-pay-amount').value = '';
         };
 
@@ -748,12 +811,10 @@
                 loan.balance = newBalance;
                 loan.totalLoan = newTotal;
                 loan.payments = updatedPayments;
-                // For demo
                 updateProfileUI(loan.name, loan.loanDate, newBalance);
                 renderHistory();
                 renderAll();
             }
-
             document.getElementById('p-penalty-amount').value = '';
         };
 
@@ -774,27 +835,52 @@
             }
         };
 
-        // --- RENDERING ---
+        // --- STATS AND RENDERING ---
+        window.renderCollectionStats = () => {
+            const filterDay = document.getElementById('filterDayInput').value; // YYYY-MM-DD
+            const filterMonth = document.getElementById('filterMonthInput').value; // YYYY-MM
+            const filterYear = document.getElementById('filterYearInput').value; // YYYY
+
+            let dailyTotal = 0;
+            let monthlyTotal = 0;
+            let yearlyTotal = 0;
+
+            loanData.forEach(loan => {
+                const payments = loan.payments || [];
+                payments.forEach(p => {
+                    if(p.type === 'payment' && p.date) {
+                        // Check Daily
+                        if(p.date === filterDay) dailyTotal += p.amount;
+                        // Check Monthly
+                        if(p.date.startsWith(filterMonth)) monthlyTotal += p.amount;
+                        // Check Yearly
+                        if(p.date.startsWith(filterYear)) yearlyTotal += p.amount;
+                    }
+                });
+            });
+
+            document.getElementById('colDaily').innerText = '₱' + dailyTotal.toLocaleString();
+            document.getElementById('colMonthly').innerText = '₱' + monthlyTotal.toLocaleString();
+            document.getElementById('colYearly').innerText = '₱' + yearlyTotal.toLocaleString();
+        };
+
         window.renderAll = () => {
             const tbody = document.getElementById('utangListBody');
             let rowsHtml = '';
-            
             let totalRec = 0, totalCol = 0, totalCap = 0, totalInt = 0;
 
             loanData.forEach(loan => {
                 totalRec += loan.balance;
                 totalCap += loan.initialLoan;
                 totalInt += loan.interest;
-                
-                const paid = (loan.payments || []).filter(p => p.type === 'payment').reduce((a,b) => a + b.amount, 0);
-                totalCol += paid;
+                totalCol += (loan.payments || []).filter(p => p.type === 'payment').reduce((a,b) => a + b.amount, 0);
 
                 const percent = ((loan.totalLoan - loan.balance) / loan.totalLoan) * 100;
                 const status = loan.balance <= 0 ? '<span class="badge bg-success">CLEARED</span>' : '<span class="badge bg-primary">ACTIVE</span>';
 
                 rowsHtml += `
                     <tr onclick="openProfile('${loan.id}')">
-                        <td><div class="fw-bold text-white">${loan.name}</div><small class="text-muted">${window.formatDate(loan.loanDate)}</small></td>
+                        <td><div class="fw-bold text-white">${loan.name}</div><small class="text-success" style="opacity:0.9">${window.formatDate(loan.loanDate)}</small></td>
                         <td>${status}</td>
                         <td width="30%">
                             <div class="progress" style="height:6px; background:rgba(255,255,255,0.1)">
@@ -808,25 +894,24 @@
             
             tbody.innerHTML = rowsHtml;
 
+            // Update Top Summary Cards
             document.getElementById('summaryTotalBalance').innerText = '₱' + totalRec.toLocaleString();
             document.getElementById('summaryTotalPaid').innerText = '₱' + totalCol.toLocaleString();
             document.getElementById('summaryTotalInvestment').innerText = '₱' + totalCap.toLocaleString();
             document.getElementById('summaryTotalInterest').innerText = '₱' + totalInt.toLocaleString();
 
+            // Run the dynamic filter calculator
+            renderCollectionStats();
             renderCharts(totalRec, totalCol, totalCap);
         };
 
         window.openProfile = (id) => {
             currentProfileId = id;
             const loan = loanData.find(l => l.id === id);
-            
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('p-pay-date').value = today;
-
-            // Reset Filters
+            const now = new Date();
+            document.getElementById('p-pay-date').value = now.toLocaleDateString('en-CA');
             document.getElementById('historyFilterType').value = 'all';
             document.getElementById('historyFilterDate').value = '';
-            
             updateProfileUI(loan.name, loan.loanDate, loan.balance);
             renderHistory(); 
             new bootstrap.Modal(document.getElementById('profileModal')).show();
@@ -838,7 +923,6 @@
             document.getElementById('p-balance').innerText = '₱' + balance.toLocaleString();
         }
 
-        // --- FIXED: HISTORY RENDER WITH FILTERS ---
         window.renderHistory = () => {
             if (!currentProfileId) return;
             const loan = loanData.find(l => l.id === currentProfileId);
@@ -850,14 +934,8 @@
 
             let history = [...(loan.payments || [])].reverse();
 
-            // Apply Type Filter
-            if (filterType !== 'all') {
-                history = history.filter(p => p.type === filterType);
-            }
-            // Apply Date Filter
-            if (filterDate) {
-                history = history.filter(p => p.date === filterDate);
-            }
+            if (filterType !== 'all') history = history.filter(p => p.type === filterType);
+            if (filterDate) history = history.filter(p => p.date === filterDate);
             
             history.forEach(p => {
                 const isPay = p.type === 'payment';
@@ -912,34 +990,21 @@
             });
         }
 
-        // --- PDF DOWNLOADER SCRIPT ---
         window.downloadPDF = () => {
-            if (!window.jspdf) {
-                alert("Library not loaded!");
-                return;
-            }
-
+            if (!window.jspdf) { alert("Library not loaded!"); return; }
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            
             const formatNumber = (num) => num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-            doc.setFontSize(22);
-            doc.setTextColor(40, 40, 40);
+            doc.setFontSize(22); doc.setTextColor(40, 40, 40);
             doc.text('LendingMaster Report', 14, 20);
+            doc.setFontSize(10); doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 26);
             
-            doc.setFontSize(10);
-            doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 26);
-            
-            let totalInvestment = 0;
-            let totalBalance = 0;
-            let totalPaid = 0;
-
+            let totalInvestment = 0, totalBalance = 0, totalPaid = 0;
             loanData.forEach(loan => {
                 totalInvestment += loan.initialLoan;
                 totalBalance += loan.balance;
-                const paid = (loan.payments || []).filter(p => p.type === 'payment').reduce((a,b) => a + b.amount, 0);
-                totalPaid += paid;
+                totalPaid += (loan.payments || []).filter(p => p.type === 'payment').reduce((a,b) => a + b.amount, 0);
             });
 
             doc.autoTable({
@@ -952,15 +1017,11 @@
             });
 
             const rows = loanData.map(u => [
-                u.name,
-                window.formatDate(u.loanDate),
-                formatNumber(u.totalLoan),
-                formatNumber(u.totalLoan - u.balance), 
-                formatNumber(u.balance)
+                u.name, window.formatDate(u.loanDate),
+                formatNumber(u.totalLoan), formatNumber(u.totalLoan - u.balance), formatNumber(u.balance)
             ]);
 
             doc.text('Borrower Status', 14, doc.lastAutoTable.finalY + 15);
-            
             doc.autoTable({
                 startY: doc.lastAutoTable.finalY + 20,
                 head: [['Name', 'Date', 'Total Loan', 'Paid', 'Balance']],
