@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LendingMaster Pro | Financial Suite v8.6 (Scrollable Notif)</title>
+    <title>LendingMaster Pro | Financial Suite v8.7 (Cash vs Online)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -293,7 +293,7 @@
                 <i class="fas fa-hand-holding-dollar fa-3x text-primary glow-icon"></i>
             </div>
             <h2 class="fw-bold mb-1">LendingMaster</h2>
-            <p class="small mb-4">Financial Management Suite v8.6</p>
+            <p class="small mb-4">Financial Management Suite v8.7</p>
 
             <div id="login-form">
                 <div class="text-start mb-4">
@@ -409,36 +409,72 @@
                 <div class="col-md-4 col-12">
                     <label class="filter-label">Filter Daily</label>
                     <input type="date" id="filterDayInput" class="form-control mb-2 text-center" onchange="renderCollectionStats()">
-                    <div class="stat-card border-info d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="stat-label text-info">Daily Collected</div>
-                            <div class="stat-value text-white" id="colDaily">₱0</div>
+                    <div class="stat-card border-info">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <div class="stat-label text-info">Daily Total</div>
+                                <div class="stat-value text-white" id="colDaily">₱0</div>
+                            </div>
+                            <i class="fas fa-calendar-day fa-2x text-info opacity-25"></i>
                         </div>
-                        <i class="fas fa-calendar-day fa-2x text-info opacity-25"></i>
+                        <div class="d-flex justify-content-between border-top border-white border-opacity-10 pt-2 mt-1">
+                            <div class="text-start">
+                                <small class="text-muted" style="font-size:0.65rem;">CASH</small>
+                                <div class="fw-bold text-success" style="font-size:0.9rem;" id="colDailyCash">₱0</div>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted" style="font-size:0.65rem;">ONLINE</small>
+                                <div class="fw-bold text-primary" style="font-size:0.9rem;" id="colDailyOnline">₱0</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="col-md-4 col-6">
                     <label class="filter-label">Filter Monthly</label>
                     <input type="month" id="filterMonthInput" class="form-control mb-2 text-center" onchange="renderCollectionStats()">
-                    <div class="stat-card border-info d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="stat-label text-info">Monthly Collected</div>
-                            <div class="stat-value text-white" id="colMonthly">₱0</div>
+                    <div class="stat-card border-info">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <div class="stat-label text-info">Monthly Total</div>
+                                <div class="stat-value text-white" id="colMonthly">₱0</div>
+                            </div>
+                            <i class="fas fa-calendar-alt fa-2x text-info opacity-25"></i>
                         </div>
-                        <i class="fas fa-calendar-alt fa-2x text-info opacity-25"></i>
+                        <div class="d-flex justify-content-between border-top border-white border-opacity-10 pt-2 mt-1">
+                            <div class="text-start">
+                                <small class="text-muted" style="font-size:0.65rem;">CASH</small>
+                                <div class="fw-bold text-success" style="font-size:0.9rem;" id="colMonthlyCash">₱0</div>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted" style="font-size:0.65rem;">ONLINE</small>
+                                <div class="fw-bold text-primary" style="font-size:0.9rem;" id="colMonthlyOnline">₱0</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="col-md-4 col-6">
                     <label class="filter-label">Filter Yearly</label>
                     <input type="number" id="filterYearInput" class="form-control mb-2 text-center" placeholder="YYYY" min="2020" max="2030" onchange="renderCollectionStats()">
-                    <div class="stat-card border-info d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="stat-label text-info">Yearly Collected</div>
-                            <div class="stat-value text-white" id="colYearly">₱0</div>
+                    <div class="stat-card border-info">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <div class="stat-label text-info">Yearly Total</div>
+                                <div class="stat-value text-white" id="colYearly">₱0</div>
+                            </div>
+                            <i class="fas fa-chart-line fa-2x text-info opacity-25"></i>
                         </div>
-                        <i class="fas fa-chart-line fa-2x text-info opacity-25"></i>
+                        <div class="d-flex justify-content-between border-top border-white border-opacity-10 pt-2 mt-1">
+                            <div class="text-start">
+                                <small class="text-muted" style="font-size:0.65rem;">CASH</small>
+                                <div class="fw-bold text-success" style="font-size:0.9rem;" id="colYearlyCash">₱0</div>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted" style="font-size:0.65rem;">ONLINE</small>
+                                <div class="fw-bold text-primary" style="font-size:0.9rem;" id="colYearlyOnline">₱0</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -548,9 +584,15 @@
                             </div>
 
                             <label class="stat-label text-success mb-2">Add Payment</label>
+                            <select id="p-payment-method" class="form-select mb-2" style="font-size: 0.85rem; border-color: rgba(16, 185, 129, 0.5); color: #10b981;">
+                                <option value="cash" selected>Cash Payment</option>
+                                <option value="online">GCash / Online</option>
+                            </select>
+
                             <div class="d-flex gap-2 mb-2">
                                 <input type="number" id="p-pay-amount" class="form-control" placeholder="Amount">
-                                <input type="date" id="p-pay-date" class="form-control" style="width: 140px;"> </div>
+                                <input type="date" id="p-pay-date" class="form-control" style="width: 140px;"> 
+                            </div>
                             <button class="btn-primary-pro w-100 mb-4" style="background: var(--success);" onclick="executePayment()">Submit Payment</button>
 
                             <hr class="border-white opacity-10">
@@ -638,19 +680,12 @@
             document.getElementById('dashboard-section').style.display = 'block';
             document.getElementById('demo-timer-bar').style.display = 'flex';
             
-            // Initial Mock Data for Demo (Matching your screenshot for testing)
+            // Initial Mock Data for Demo
             loanData = [
                 {id: 'demo1', name: 'Alma', balance: 500, initialLoan: 500, interest: 100, totalLoan: 600, loanDate: '2025-12-10', payments: []},
                 {id: 'demo2', name: 'Amy', balance: 14750, initialLoan: 15000, interest: 3000, totalLoan: 18000, loanDate: '2025-12-11', payments: []},
                 {id: 'demo3', name: 'Ana', balance: 6000, initialLoan: 6000, interest: 1200, totalLoan: 7200, loanDate: '2025-12-11', payments: []},
-                {id: 'demo4', name: 'Bea', balance: 10800, initialLoan: 10000, interest: 2000, totalLoan: 12000, loanDate: '2025-12-11', payments: []},
-                {id: 'demo5', name: 'Beng', balance: 3500, initialLoan: 3500, interest: 700, totalLoan: 4200, loanDate: '2025-12-11', payments: []},
             ];
-            // Add more dummy data to trigger scroll if needed
-            for(let i=0; i<10; i++) {
-                loanData.push({id: `extra${i}`, name: `Borrower ${i}`, balance: 2000, initialLoan: 2000, interest: 400, totalLoan: 2400, loanDate: '2025-12-14', payments: []});
-            }
-
             initializeFilters();
             renderAll();
 
@@ -830,9 +865,12 @@
             });
         };
 
+        // --- UPDATED PAYMENT FUNCTION (WITH METHOD) ---
         window.executePayment = async () => {
             const amount = parseFloat(document.getElementById('p-pay-amount').value);
             const date = document.getElementById('p-pay-date').value;
+            const method = document.getElementById('p-payment-method').value; // Get selected method
+
             if(!amount || !date) {
                  Swal.fire({icon:'warning', title:'Required', text:'Please enter amount and date', background:'#161b2c', color:'white'});
                  return;
@@ -840,7 +878,10 @@
 
             const loan = loanData.find(l => l.id === currentProfileId);
             const newBalance = loan.balance - amount;
-            const newPayment = { amount, date, type: 'payment' };
+            
+            // Add method to the payment object
+            const newPayment = { amount, date, type: 'payment', method: method };
+            
             const updatedPayments = [...(loan.payments || []), newPayment];
 
             if(currentUser) {
@@ -886,7 +927,7 @@
             document.getElementById('p-penalty-amount').value = '';
         };
 
-        // --- NEW: DELETE TRANSACTION LOGIC ---
+        // --- DELETE TRANSACTION LOGIC ---
         window.deleteTransaction = async (originalIndex) => {
             const confirm = await Swal.fire({
                 title: 'Delete Transaction?',
@@ -957,30 +998,58 @@
             }
         };
 
-        // --- STATS AND RENDERING ---
+        // --- UPDATED: STATS RENDERING WITH CASH/ONLINE BREAKDOWN ---
         window.renderCollectionStats = () => {
             const filterDay = document.getElementById('filterDayInput').value;
             const filterMonth = document.getElementById('filterMonthInput').value;
             const filterYear = document.getElementById('filterYearInput').value;
 
-            let dailyTotal = 0;
-            let monthlyTotal = 0;
-            let yearlyTotal = 0;
+            // Counters
+            let dTotal = 0, dCash = 0, dOnline = 0;
+            let mTotal = 0, mCash = 0, mOnline = 0;
+            let yTotal = 0, yCash = 0, yOnline = 0;
 
             loanData.forEach(loan => {
                 const payments = loan.payments || [];
                 payments.forEach(p => {
                     if(p.type === 'payment' && p.date) {
-                        if(p.date === filterDay) dailyTotal += p.amount;
-                        if(p.date.startsWith(filterMonth)) monthlyTotal += p.amount;
-                        if(p.date.startsWith(filterYear)) yearlyTotal += p.amount;
+                        const amt = p.amount;
+                        const isOnline = p.method === 'online'; // Check if online
+
+                        // Daily
+                        if(p.date === filterDay) {
+                            dTotal += amt;
+                            if(isOnline) dOnline += amt; else dCash += amt;
+                        }
+                        // Monthly
+                        if(p.date.startsWith(filterMonth)) {
+                            mTotal += amt;
+                            if(isOnline) mOnline += amt; else mCash += amt;
+                        }
+                        // Yearly
+                        if(p.date.startsWith(filterYear)) {
+                            yTotal += amt;
+                            if(isOnline) yOnline += amt; else yCash += amt;
+                        }
                     }
                 });
             });
 
-            document.getElementById('colDaily').innerText = '₱' + dailyTotal.toLocaleString();
-            document.getElementById('colMonthly').innerText = '₱' + monthlyTotal.toLocaleString();
-            document.getElementById('colYearly').innerText = '₱' + yearlyTotal.toLocaleString();
+            // Update DOM
+            // Daily
+            document.getElementById('colDaily').innerText = '₱' + dTotal.toLocaleString();
+            document.getElementById('colDailyCash').innerText = '₱' + dCash.toLocaleString();
+            document.getElementById('colDailyOnline').innerText = '₱' + dOnline.toLocaleString();
+
+            // Monthly
+            document.getElementById('colMonthly').innerText = '₱' + mTotal.toLocaleString();
+            document.getElementById('colMonthlyCash').innerText = '₱' + mCash.toLocaleString();
+            document.getElementById('colMonthlyOnline').innerText = '₱' + mOnline.toLocaleString();
+
+            // Yearly
+            document.getElementById('colYearly').innerText = '₱' + yTotal.toLocaleString();
+            document.getElementById('colYearlyCash').innerText = '₱' + yCash.toLocaleString();
+            document.getElementById('colYearlyOnline').innerText = '₱' + yOnline.toLocaleString();
         };
 
         window.renderAll = () => {
@@ -1041,6 +1110,7 @@
             const loan = loanData.find(l => l.id === id);
             const now = new Date();
             document.getElementById('p-pay-date').value = now.toLocaleDateString('en-CA');
+            document.getElementById('p-payment-method').value = 'cash'; // Reset method
             document.getElementById('historyFilterType').value = 'all';
             document.getElementById('historyFilterDate').value = '';
             updateProfileUI(loan.name, loan.loanDate, loan.balance);
@@ -1074,10 +1144,23 @@
             
             displayHistory.forEach(p => {
                 const isPay = p.type === 'payment';
+                // Icon for Cash vs Online
+                let methodIcon = '';
+                if(isPay) {
+                    if(p.method === 'online') {
+                        methodIcon = '<i class="fas fa-mobile-alt text-primary me-2" title="GCash/Online"></i>';
+                    } else {
+                        methodIcon = '<i class="fas fa-money-bill-wave text-success me-2" title="Cash"></i>';
+                    }
+                }
+
                 list.innerHTML += `
                     <div class="d-flex justify-content-between align-items-center p-3 mb-2 rounded" style="background:rgba(255,255,255,0.03); border-left: 3px solid ${isPay ? '#10b981' : '#ef4444'}">
                         <div>
-                            <div class="fw-bold text-white">${isPay ? 'Payment Received' : 'Penalty Added'}</div>
+                            <div class="fw-bold text-white">
+                                ${methodIcon}
+                                ${isPay ? 'Payment Received' : 'Penalty Added'}
+                            </div>
                             <small class="history-date">${window.formatDate(p.date)}</small>
                         </div>
                         <div class="d-flex align-items-center gap-3">
@@ -1219,7 +1302,7 @@
                 return;
             }
 
-            // ADDED: max-height: 300px and overflow-y: auto
+            // Scrollable List
             let htmlList = `<div class="text-start bg-dark p-3 rounded border border-secondary custom-scroll" style="max-height: 300px; overflow-y: auto;">`;
             list.forEach(u => {
                 htmlList += `
