@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LendingMaster Pro | Financial Suite v8.8 (Smart Notifs)</title>
+    <title>LendingMaster Pro | Financial Suite v8.9 (Auto-Comma)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -99,7 +99,6 @@
             color: var(--warning) !important;
         }
 
-        /* Style for clickable rows in SweetAlert */
         .unpaid-row {
             transition: all 0.2s;
             border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -305,7 +304,7 @@
                 <i class="fas fa-hand-holding-dollar fa-3x text-primary glow-icon"></i>
             </div>
             <h2 class="fw-bold mb-1">LendingMaster</h2>
-            <p class="small mb-4">Financial Management Suite v8.8</p>
+            <p class="small mb-4">Financial Management Suite v8.9</p>
 
             <div id="login-form">
                 <div class="text-start mb-4">
@@ -552,7 +551,7 @@
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="stat-label mb-1">Principal</label>
-                                <input type="number" id="initialLoan" class="form-control" placeholder="0.00">
+                                <input type="text" id="initialLoan" class="form-control" placeholder="0" oninput="formatInputCurrency(this)">
                             </div>
                             <div class="col-6">
                                 <label class="stat-label mb-1">Interest</label>
@@ -602,7 +601,7 @@
                             </select>
 
                             <div class="d-flex gap-2 mb-2">
-                                <input type="number" id="p-pay-amount" class="form-control" placeholder="Amount">
+                                <input type="text" id="p-pay-amount" class="form-control" placeholder="Amount" oninput="formatInputCurrency(this)">
                                 <input type="date" id="p-pay-date" class="form-control" style="width: 140px;"> 
                             </div>
                             <button class="btn-primary-pro w-100 mb-4" style="background: var(--success);" onclick="executePayment()">Submit Payment</button>
@@ -611,7 +610,7 @@
 
                             <label class="stat-label text-danger mb-2">Penalty</label>
                             <div class="input-group mb-4">
-                                <input type="number" id="p-penalty-amount" class="form-control" placeholder="Fee">
+                                <input type="text" id="p-penalty-amount" class="form-control" placeholder="Fee" oninput="formatInputCurrency(this)">
                                 <button class="btn btn-outline-danger" onclick="executePenalty()">Apply</button>
                             </div>
 
@@ -676,6 +675,35 @@
             const options = { year: 'numeric', month: 'short', day: 'numeric' };
             return new Date(dateString).toLocaleDateString('en-US', options);
         }
+
+        // --- NEW AUTO-COMMA FUNCTIONS ---
+        // 1. Attaches to ONINPUT event in HTML
+        window.formatInputCurrency = (input) => {
+            // Remove existing commas to get clean value
+            let value = input.value.replace(/,/g, '');
+            
+            // Allow decimals but handle logic
+            if(value && !isNaN(value)) {
+                // If user is typing a decimal, don't format yet
+                if(value.endsWith('.')) return; 
+                
+                const parts = value.split('.');
+                // Format the integer part with commas
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                
+                // Join back
+                input.value = parts.join('.');
+            } else {
+                // If empty or invalid, clear
+                if (value === '') input.value = '';
+            }
+        };
+
+        // 2. Used to CLEAN the value before saving to DB
+        const parseVal = (id) => {
+            const raw = document.getElementById(id).value.replace(/,/g, '');
+            return parseFloat(raw) || 0;
+        };
 
         // --- DEMO MODE LOGIC ---
         window.startDemo = () => {
@@ -840,7 +868,8 @@
         // --- LOAN CRUD FUNCTIONS ---
         window.addUtang = async () => {
             const name = document.getElementById('name').value.trim();
-            const principal = parseFloat(document.getElementById('initialLoan').value);
+            // CHANGE: Use helper to remove commas before saving
+            const principal = parseVal('initialLoan');
             const rate = parseFloat(document.getElementById('interestRate').value);
             const date = document.getElementById('loanDate').value;
 
@@ -884,7 +913,8 @@
 
         // --- PAYMENT FUNCTION (WITH METHOD) ---
         window.executePayment = async () => {
-            const amount = parseFloat(document.getElementById('p-pay-amount').value);
+            // CHANGE: Use helper to remove commas
+            const amount = parseVal('p-pay-amount');
             const date = document.getElementById('p-pay-date').value;
             const method = document.getElementById('p-payment-method').value;
 
@@ -915,7 +945,8 @@
         };
 
         window.executePenalty = async () => {
-            const amount = parseFloat(document.getElementById('p-penalty-amount').value);
+            // CHANGE: Use helper to remove commas
+            const amount = parseVal('p-penalty-amount');
             if(!amount) return;
 
             const loan = loanData.find(l => l.id === currentProfileId);
@@ -1118,6 +1149,11 @@
             document.getElementById('p-payment-method').value = 'cash'; 
             document.getElementById('historyFilterType').value = 'all';
             document.getElementById('historyFilterDate').value = '';
+            
+            // Clean input fields when opening modal
+            document.getElementById('p-pay-amount').value = '';
+            document.getElementById('p-penalty-amount').value = '';
+            
             updateProfileUI(loan.name, loan.loanDate, loan.balance);
             renderHistory(); 
             new bootstrap.Modal(document.getElementById('profileModal')).show();
