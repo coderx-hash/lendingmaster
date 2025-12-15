@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LendingMaster Pro | Financial Suite v8.9 (Auto-Comma)</title>
+    <title>LendingMaster Pro | Financial Suite v9.0 (UI Fixes)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -190,11 +190,11 @@
         .stat-value { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; }
 
-        /* --- INPUTS GENERAL --- */
+        /* --- INPUTS GENERAL - UPDATED FOR WHITE TEXT --- */
         .form-control, .form-select {
             background-color: var(--bg-input); 
             border: 1px solid rgba(255,255,255,0.1); 
-            color: white;
+            color: #ffffff !important; /* Force White Text */
             padding: 10px 15px; 
             border-radius: 8px; 
             font-size: 0.9rem;
@@ -203,8 +203,14 @@
             background-color: #263350; 
             border-color: var(--primary); 
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); 
-            color: white;
+            color: #ffffff !important;
         }
+        /* Make placeholders visible */
+        ::placeholder {
+            color: rgba(255, 255, 255, 0.6) !important;
+            opacity: 1;
+        }
+        
         input[type="date"], input[type="month"] { color-scheme: dark; }
 
         /* --- BUTTONS --- */
@@ -304,7 +310,7 @@
                 <i class="fas fa-hand-holding-dollar fa-3x text-primary glow-icon"></i>
             </div>
             <h2 class="fw-bold mb-1">LendingMaster</h2>
-            <p class="small mb-4">Financial Management Suite v8.9</p>
+            <p class="small mb-4">Financial Management Suite v9.0</p>
 
             <div id="login-form">
                 <div class="text-start mb-4">
@@ -582,7 +588,7 @@
                 <div class="modal-header p-4">
                     <div>
                         <h4 id="p-name" class="mb-0 fw-bold text-white">Name</h4>
-                        <small id="p-date" class="text-muted">Date</small>
+                        <small id="p-date" class="text-white opacity-75">Date</small>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -676,30 +682,19 @@
             return new Date(dateString).toLocaleDateString('en-US', options);
         }
 
-        // --- NEW AUTO-COMMA FUNCTIONS ---
-        // 1. Attaches to ONINPUT event in HTML
+        // --- AUTO-COMMA FUNCTIONS ---
         window.formatInputCurrency = (input) => {
-            // Remove existing commas to get clean value
             let value = input.value.replace(/,/g, '');
-            
-            // Allow decimals but handle logic
             if(value && !isNaN(value)) {
-                // If user is typing a decimal, don't format yet
                 if(value.endsWith('.')) return; 
-                
                 const parts = value.split('.');
-                // Format the integer part with commas
                 parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                
-                // Join back
                 input.value = parts.join('.');
             } else {
-                // If empty or invalid, clear
                 if (value === '') input.value = '';
             }
         };
 
-        // 2. Used to CLEAN the value before saving to DB
         const parseVal = (id) => {
             const raw = document.getElementById(id).value.replace(/,/g, '');
             return parseFloat(raw) || 0;
@@ -725,9 +720,10 @@
                 {id: 'demo1', name: 'Alma', balance: 500, initialLoan: 500, interest: 100, totalLoan: 600, loanDate: '2025-12-10', payments: []},
                 {id: 'demo2', name: 'Amy', balance: 14750, initialLoan: 15000, interest: 3000, totalLoan: 18000, loanDate: '2025-12-11', payments: []},
                 {id: 'demo3', name: 'Ana', balance: 6000, initialLoan: 6000, interest: 1200, totalLoan: 7200, loanDate: '2025-12-11', payments: []},
+                {id: 'demo4', name: 'Juan', balance: 0, initialLoan: 2000, interest: 400, totalLoan: 2400, loanDate: '2025-11-20', payments: [{amount:2400, type:'payment'}]},
             ];
             // Add dummy data to show scrolling
-            for(let i=1; i<=7; i++) {
+            for(let i=1; i<=5; i++) {
                 loanData.push({id: `dummy${i}`, name: `Borrower ${i}`, balance: 1000, initialLoan: 1000, interest: 200, totalLoan: 1200, loanDate: '2025-12-12', payments: []});
             }
 
@@ -868,7 +864,6 @@
         // --- LOAN CRUD FUNCTIONS ---
         window.addUtang = async () => {
             const name = document.getElementById('name').value.trim();
-            // CHANGE: Use helper to remove commas before saving
             const principal = parseVal('initialLoan');
             const rate = parseFloat(document.getElementById('interestRate').value);
             const date = document.getElementById('loanDate').value;
@@ -913,7 +908,6 @@
 
         // --- PAYMENT FUNCTION (WITH METHOD) ---
         window.executePayment = async () => {
-            // CHANGE: Use helper to remove commas
             const amount = parseVal('p-pay-amount');
             const date = document.getElementById('p-pay-date').value;
             const method = document.getElementById('p-payment-method').value;
@@ -945,7 +939,6 @@
         };
 
         window.executePenalty = async () => {
-            // CHANGE: Use helper to remove commas
             const amount = parseVal('p-penalty-amount');
             if(!amount) return;
 
@@ -1088,6 +1081,7 @@
             document.getElementById('colYearlyOnline').innerText = '₱' + yOnline.toLocaleString();
         };
 
+        // --- UPDATED RENDER ALL FUNCTION ---
         window.renderAll = () => {
             const tbody = document.getElementById('utangListBody');
             let rowsHtml = '';
@@ -1102,7 +1096,12 @@
                 totalCol += (loan.payments || []).filter(p => p.type === 'payment').reduce((a,b) => a + b.amount, 0);
 
                 const percent = ((loan.totalLoan - loan.balance) / loan.totalLoan) * 100;
-                const status = loan.balance <= 0 ? '<span class="badge bg-success">CLEARED</span>' : '<span class="badge bg-primary">ACTIVE</span>';
+                // Determine Status Badge
+                const isCleared = loan.balance <= 0;
+                const statusBadge = isCleared ? '<span class="badge bg-success">CLEARED</span>' : '<span class="badge bg-primary">ACTIVE</span>';
+                
+                // Date Color (Green if Active, Red if Cleared/Zero Balance)
+                const dateColorClass = isCleared ? 'text-danger' : 'text-success';
 
                 rowsHtml += `
                     <tr onclick="openProfile('${loan.id}')">
@@ -1116,9 +1115,11 @@
                                     I: ₱${loan.interest.toLocaleString()}
                                 </span>
                             </div>
-                            <small class="text-muted" style="font-size: 0.75rem;">${window.formatDate(loan.loanDate)}</small>
+                            <small class="${dateColorClass} fw-bold" style="font-size: 0.75rem;">
+                                ${window.formatDate(loan.loanDate)}
+                            </small>
                         </td>
-                        <td>${status}</td>
+                        <td>${statusBadge}</td>
                         <td width="30%">
                             <div class="progress" style="height:6px; background:rgba(255,255,255,0.1)">
                                 <div class="progress-bar bg-primary" style="width:${percent}%"></div>
