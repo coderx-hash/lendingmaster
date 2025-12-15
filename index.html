@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LendingMaster Pro | Financial Suite v8.7 (Cash vs Online)</title>
+    <title>LendingMaster Pro | Financial Suite v8.8 (Smart Notifs)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -79,7 +79,7 @@
             transition: all 0.3s ease;
         }
 
-        /* --- NOTIFICATION ANIMATIONS --- */
+        /* --- NOTIFICATION ANIMATIONS & STYLES --- */
         .hover-opacity-100:hover { opacity: 1 !important; }
         .transition { transition: all 0.3s ease; }
 
@@ -98,6 +98,18 @@
             animation: bellShake 2s infinite;
             color: var(--warning) !important;
         }
+
+        /* Style for clickable rows in SweetAlert */
+        .unpaid-row {
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .unpaid-row:hover {
+            background-color: rgba(59, 130, 246, 0.15);
+            padding-left: 10px !important;
+            cursor: pointer;
+        }
+        .unpaid-row:last-child { border-bottom: none; }
 
         /* --- SCROLLBAR STYLING --- */
         ::-webkit-scrollbar { width: 6px; }
@@ -293,7 +305,7 @@
                 <i class="fas fa-hand-holding-dollar fa-3x text-primary glow-icon"></i>
             </div>
             <h2 class="fw-bold mb-1">LendingMaster</h2>
-            <p class="small mb-4">Financial Management Suite v8.7</p>
+            <p class="small mb-4">Financial Management Suite v8.8</p>
 
             <div id="login-form">
                 <div class="text-start mb-4">
@@ -686,6 +698,11 @@
                 {id: 'demo2', name: 'Amy', balance: 14750, initialLoan: 15000, interest: 3000, totalLoan: 18000, loanDate: '2025-12-11', payments: []},
                 {id: 'demo3', name: 'Ana', balance: 6000, initialLoan: 6000, interest: 1200, totalLoan: 7200, loanDate: '2025-12-11', payments: []},
             ];
+            // Add dummy data to show scrolling
+            for(let i=1; i<=7; i++) {
+                loanData.push({id: `dummy${i}`, name: `Borrower ${i}`, balance: 1000, initialLoan: 1000, interest: 200, totalLoan: 1200, loanDate: '2025-12-12', payments: []});
+            }
+
             initializeFilters();
             renderAll();
 
@@ -865,11 +882,11 @@
             });
         };
 
-        // --- UPDATED PAYMENT FUNCTION (WITH METHOD) ---
+        // --- PAYMENT FUNCTION (WITH METHOD) ---
         window.executePayment = async () => {
             const amount = parseFloat(document.getElementById('p-pay-amount').value);
             const date = document.getElementById('p-pay-date').value;
-            const method = document.getElementById('p-payment-method').value; // Get selected method
+            const method = document.getElementById('p-payment-method').value;
 
             if(!amount || !date) {
                  Swal.fire({icon:'warning', title:'Required', text:'Please enter amount and date', background:'#161b2c', color:'white'});
@@ -879,9 +896,7 @@
             const loan = loanData.find(l => l.id === currentProfileId);
             const newBalance = loan.balance - amount;
             
-            // Add method to the payment object
             const newPayment = { amount, date, type: 'payment', method: method };
-            
             const updatedPayments = [...(loan.payments || []), newPayment];
 
             if(currentUser) {
@@ -944,18 +959,16 @@
             const loan = loanData.find(l => l.id === currentProfileId);
             const transaction = loan.payments[originalIndex];
             
-            // Revert Math
             let newBalance = loan.balance;
             let newTotalLoan = loan.totalLoan;
 
             if (transaction.type === 'payment') {
-                newBalance += transaction.amount; // Add back to debt
+                newBalance += transaction.amount; 
             } else if (transaction.type === 'penalty') {
-                newBalance -= transaction.amount; // Remove from debt
-                newTotalLoan -= transaction.amount; // Remove from total projected
+                newBalance -= transaction.amount; 
+                newTotalLoan -= transaction.amount; 
             }
 
-            // Remove item from array
             const updatedPayments = [...loan.payments];
             updatedPayments.splice(originalIndex, 1);
 
@@ -998,13 +1011,12 @@
             }
         };
 
-        // --- UPDATED: STATS RENDERING WITH CASH/ONLINE BREAKDOWN ---
+        // --- STATS RENDERING WITH CASH/ONLINE BREAKDOWN ---
         window.renderCollectionStats = () => {
             const filterDay = document.getElementById('filterDayInput').value;
             const filterMonth = document.getElementById('filterMonthInput').value;
             const filterYear = document.getElementById('filterYearInput').value;
 
-            // Counters
             let dTotal = 0, dCash = 0, dOnline = 0;
             let mTotal = 0, mCash = 0, mOnline = 0;
             let yTotal = 0, yCash = 0, yOnline = 0;
@@ -1014,19 +1026,16 @@
                 payments.forEach(p => {
                     if(p.type === 'payment' && p.date) {
                         const amt = p.amount;
-                        const isOnline = p.method === 'online'; // Check if online
+                        const isOnline = p.method === 'online'; 
 
-                        // Daily
                         if(p.date === filterDay) {
                             dTotal += amt;
                             if(isOnline) dOnline += amt; else dCash += amt;
                         }
-                        // Monthly
                         if(p.date.startsWith(filterMonth)) {
                             mTotal += amt;
                             if(isOnline) mOnline += amt; else mCash += amt;
                         }
-                        // Yearly
                         if(p.date.startsWith(filterYear)) {
                             yTotal += amt;
                             if(isOnline) yOnline += amt; else yCash += amt;
@@ -1035,18 +1044,14 @@
                 });
             });
 
-            // Update DOM
-            // Daily
             document.getElementById('colDaily').innerText = '₱' + dTotal.toLocaleString();
             document.getElementById('colDailyCash').innerText = '₱' + dCash.toLocaleString();
             document.getElementById('colDailyOnline').innerText = '₱' + dOnline.toLocaleString();
 
-            // Monthly
             document.getElementById('colMonthly').innerText = '₱' + mTotal.toLocaleString();
             document.getElementById('colMonthlyCash').innerText = '₱' + mCash.toLocaleString();
             document.getElementById('colMonthlyOnline').innerText = '₱' + mOnline.toLocaleString();
 
-            // Yearly
             document.getElementById('colYearly').innerText = '₱' + yTotal.toLocaleString();
             document.getElementById('colYearlyCash').innerText = '₱' + yCash.toLocaleString();
             document.getElementById('colYearlyOnline').innerText = '₱' + yOnline.toLocaleString();
@@ -1110,7 +1115,7 @@
             const loan = loanData.find(l => l.id === id);
             const now = new Date();
             document.getElementById('p-pay-date').value = now.toLocaleDateString('en-CA');
-            document.getElementById('p-payment-method').value = 'cash'; // Reset method
+            document.getElementById('p-payment-method').value = 'cash'; 
             document.getElementById('historyFilterType').value = 'all';
             document.getElementById('historyFilterDate').value = '';
             updateProfileUI(loan.name, loan.loanDate, loan.balance);
@@ -1133,10 +1138,7 @@
             const filterType = document.getElementById('historyFilterType').value;
             const filterDate = document.getElementById('historyFilterDate').value;
 
-            // Map with original index to allow deletion
             let historyWithIndex = (loan.payments || []).map((p, index) => ({...p, originalIndex: index}));
-            
-            // Reverse to show newest first
             let displayHistory = [...historyWithIndex].reverse();
 
             if (filterType !== 'all') displayHistory = displayHistory.filter(p => p.type === filterType);
@@ -1144,7 +1146,6 @@
             
             displayHistory.forEach(p => {
                 const isPay = p.type === 'payment';
-                // Icon for Cash vs Online
                 let methodIcon = '';
                 if(isPay) {
                     if(p.method === 'online') {
@@ -1287,7 +1288,7 @@
             return unpaidList;
         };
 
-        // --- UPDATED: SCROLLABLE LIST ---
+        // --- CLICKABLE & SCROLLABLE LIST ---
         window.showUnpaidNotif = () => {
             const list = window.checkUnpaidToday();
 
@@ -1302,11 +1303,11 @@
                 return;
             }
 
-            // Scrollable List
-            let htmlList = `<div class="text-start bg-dark p-3 rounded border border-secondary custom-scroll" style="max-height: 300px; overflow-y: auto;">`;
+            // Fixed Height (250px ~ 5 rows) + Click Handler
+            let htmlList = `<div class="text-start bg-dark p-2 rounded border border-secondary custom-scroll" style="max-height: 250px; overflow-y: auto;">`;
             list.forEach(u => {
                 htmlList += `
-                    <div class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                    <div onclick="openProfile('${u.id}'); Swal.close();" class="unpaid-row d-flex justify-content-between align-items-center p-2">
                         <span class="text-white fw-bold">${u.name}</span>
                         <span class="text-danger small">Bal: ₱${u.balance.toLocaleString()}</span>
                     </div>
@@ -1320,7 +1321,7 @@
                 icon: 'warning',
                 background: '#161b2c',
                 color: 'white',
-                confirmButtonText: 'Got it'
+                confirmButtonText: 'Close'
             });
         };
     </script>
