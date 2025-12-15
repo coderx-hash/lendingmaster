@@ -31,6 +31,7 @@
             --danger: #ef4444; 
             --warning: #f59e0b;
             --info: #06b6d4;
+            --gold: #FFD700; /* New Gold Variable */
             
             /* High Tech Variables */
             --neon-blue: #00f3ff;
@@ -45,6 +46,82 @@
             min-height: 100vh;
             overscroll-behavior-y: none;
         }
+
+        /* --- UPDATED INPUTS (WHITE BG / BLACK TEXT) --- */
+        .form-control, .form-select {
+            background-color: #f8fafc !important; 
+            border: 1px solid #cbd5e1 !important; 
+            color: #000000 !important; /* Force Black Text */
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 0.95rem;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #ffffff !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+            color: #000000 !important;
+        }
+        ::placeholder {
+            color: #64748b !important;
+            opacity: 0.8;
+        }
+        /* Keep Date inputs readable */
+        input[type="date"], input[type="month"] { color-scheme: light; }
+
+        /* --- SUBSCRIPTION PAYWALL (NEW FEATURE) --- */
+        #subscription-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.96);
+            z-index: 99999;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(15px);
+        }
+        
+        .premium-card {
+            background: linear-gradient(145deg, #1a1a1a, #000000);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-card::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(transparent, rgba(255, 215, 0, 0.15), transparent 30%);
+            animation: rotate 4s linear infinite;
+        }
+        @keyframes rotate { 100% { transform: rotate(1turn); } }
+        
+        .premium-content { position: relative; z-index: 2; }
+        
+        .gold-text {
+            background: linear-gradient(to bottom, #FFD700, #FDB931);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+        }
+        
+        .btn-vip {
+            background: linear-gradient(to right, #FDB931, #FFD700, #FDB931);
+            color: black; font-weight: 900; border: none; padding: 15px 40px;
+            font-size: 1.2rem; border-radius: 50px; text-transform: uppercase;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+            transition: all 0.3s; margin-top: 20px; width: 100%;
+        }
+        .btn-vip:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(255, 215, 0, 0.6); color: black; }
+
 
         /* --- INTRO ANIMATION STYLES (MAANGAS EFFECTS) --- */
         #intro-overlay {
@@ -168,16 +245,25 @@
             color: var(--warning) !important;
         }
 
-        .unpaid-row {
-            transition: all 0.2s;
+        /* UPDATED SCROLLABLE NOTIFICATION LIST */
+        .notification-list-container {
+            max-height: 300px;
+            overflow-y: auto;
+            text-align: left;
+        }
+        .notif-item {
+            padding: 10px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .unpaid-row:hover {
-            background-color: rgba(59, 130, 246, 0.15);
-            padding-left: 10px !important;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             cursor: pointer;
+            transition: 0.2s;
         }
-        .unpaid-row:last-child { border-bottom: none; }
+        .notif-item:hover { background: rgba(255,255,255,0.05); }
+        .notif-renewal { border-left: 3px solid var(--gold); background: rgba(255, 215, 0, 0.05); }
+        .notif-unpaid { border-left: 3px solid var(--danger); }
+
 
         /* --- SCROLLBAR STYLING --- */
         ::-webkit-scrollbar { width: 6px; }
@@ -198,20 +284,20 @@
         .login-card label { color: #ffffff !important; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; }
         
         .login-input {
-            background: rgba(0, 0, 0, 0.4) !important;
+            background: rgba(255, 255, 255, 0.9) !important; /* Slightly transparent white for login */
             border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            color: #ffffff !important;
+            color: #000000 !important;
             border-radius: 12px !important;
             padding: 14px 18px !important;
             font-size: 1rem !important;
             transition: 0.3s all;
         }
         .login-input:focus {
-            background: rgba(0, 0, 0, 0.6) !important;
+            background: #ffffff !important;
             border-color: var(--primary) !important;
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.25) !important;
         }
-        .login-input::placeholder { color: rgba(255,255,255,0.5) !important; }
+        .login-input::placeholder { color: rgba(0,0,0,0.5) !important; }
         .glow-icon { filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.8)); }
 
         /* --- WHITE MODE (Register Only) --- */
@@ -259,28 +345,6 @@
         .stat-value { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; }
 
-        /* --- INPUTS GENERAL - UPDATED FOR WHITE TEXT --- */
-        .form-control, .form-select {
-            background-color: var(--bg-input); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            color: #ffffff !important; /* Force White Text */
-            padding: 10px 15px; 
-            border-radius: 8px; 
-            font-size: 0.9rem;
-        }
-        .form-control:focus, .form-select:focus {
-            background-color: #263350; 
-            border-color: var(--primary); 
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); 
-            color: #ffffff !important;
-        }
-        /* Make placeholders visible */
-        ::placeholder {
-            color: rgba(255, 255, 255, 0.6) !important;
-            opacity: 1;
-        }
-        
-        input[type="date"], input[type="month"] { color-scheme: dark; }
 
         /* --- BUTTONS --- */
         .btn-primary-pro {
@@ -368,6 +432,33 @@
     </style>
 </head>
 <body>
+
+    <div id="subscription-overlay">
+        <div class="premium-card">
+            <div class="premium-content">
+                <i class="fas fa-crown fa-3x" style="color: var(--gold); margin-bottom: 15px;"></i>
+                <h1 class="gold-text">ACCESS EXPIRED</h1>
+                <p class="text-white opacity-75">Your free trial session has ended.</p>
+                
+                <hr style="border-color: rgba(255,215,0,0.3);">
+                
+                <p class="text-uppercase small fw-bold text-white mb-0">LIFETIME ACCESS PRO</p>
+                <div class="price-tag" style="font-size: 3rem; font-weight: 900; color: white; margin: 10px 0;">₱499</div>
+                <p class="small text-white opacity-50 mb-4">One-time payment. No monthly fees.</p>
+
+                <div class="bg-dark p-3 rounded border border-warning mb-3 text-start">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-mobile-alt text-warning me-2"></i>
+                        <span class="text-white fw-bold">GCash Payment</span>
+                    </div>
+                    <div class="h4 text-white fw-bold mb-0">0948-374-8304</div>
+                    <small class="text-muted">Name: AN......LO</small>
+                </div>
+
+                <button class="btn-vip" onclick="openPaymentForm()">GET FULL ACCESS</button>
+            </div>
+        </div>
+    </div>
 
     <div id="intro-overlay">
         <div class="cyber-grid"></div>
@@ -467,8 +558,8 @@
                 </a>
                 
                 <div class="d-flex align-items-center gap-3">
-                    <div class="position-relative" style="cursor: pointer;" onclick="showUnpaidNotif()">
-                        <i class="fas fa-bell fa-lg text-white opacity-75 hover-opacity-100 transition"></i>
+                    <div class="position-relative" style="cursor: pointer;" onclick="showNotifications()">
+                        <i class="fas fa-bell fa-lg text-white opacity-75 hover-opacity-100 transition" id="bell-icon"></i>
                         <span id="notif-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger hidden">
                             0
                         </span>
@@ -829,11 +920,13 @@
             return parseFloat(raw) || 0;
         };
 
-        // --- DEMO MODE LOGIC ---
+        // --- DEMO MODE LOGIC (UPDATED WITH STRICT BLOCK) ---
         window.startDemo = () => {
-            const blocked = localStorage.getItem('demoBlocked');
-            if (blocked) {
-                Swal.fire({icon:'error', title:'Demo Expired', text:'Please subscribe to access.', background:'#161b2c', color:'white'});
+            // Check for previous expiry first (Strict Mode)
+            const demoStatus = localStorage.getItem('lending_demo_status');
+            
+            if (demoStatus === 'expired') {
+                showSubscriptionGate();
                 return;
             }
 
@@ -848,7 +941,7 @@
             loanData = [
                 {id: 'demo1', name: 'Alma', balance: 500, initialLoan: 500, interest: 100, totalLoan: 600, loanDate: '2025-12-10', payments: []},
                 {id: 'demo2', name: 'Amy', balance: 14750, initialLoan: 15000, interest: 3000, totalLoan: 18000, loanDate: '2025-12-11', payments: []},
-                {id: 'demo3', name: 'Ana', balance: 6000, initialLoan: 6000, interest: 1200, totalLoan: 7200, loanDate: '2025-12-11', payments: []},
+                {id: 'demo3', name: 'Ana', balance: 800, initialLoan: 6000, interest: 1200, totalLoan: 7200, loanDate: '2025-12-11', payments: []}, // Low balance
                 {id: 'demo4', name: 'Juan', balance: 0, initialLoan: 2000, interest: 400, totalLoan: 2400, loanDate: '2025-11-20', payments: [{amount:2400, type:'payment'}]},
             ];
             // Add dummy data to show scrolling
@@ -867,13 +960,31 @@
 
                 if (remaining <= 0) {
                     clearInterval(timerInterval);
-                    localStorage.setItem('demoBlocked', 'true');
-                    document.body.innerHTML = "<div style='height:100vh; display:flex; justify-content:center; align-items:center; background:#0f111a; color:white; flex-direction:column;'><h1>DEMO EXPIRED</h1><p>Please contact admin to subscribe.</p></div>";
+                    endDemo();
                 } else {
                     const seconds = Math.floor(remaining / 1000);
                     document.getElementById('timer-countdown').innerText = `00:${seconds < 10 ? '0'+seconds : seconds}`;
                 }
             }, 1000);
+        };
+
+        function endDemo() {
+            // Permanently block this browser
+            localStorage.setItem('lending_demo_status', 'expired');
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('demo-timer-bar').style.display = 'none';
+            showSubscriptionGate();
+        }
+
+        function showSubscriptionGate() {
+            document.getElementById('subscription-overlay').style.display = 'flex';
+        }
+
+        window.openPaymentForm = () => {
+            // Redirect user to register steps inside the main auth card
+            document.getElementById('subscription-overlay').style.display = 'none';
+            document.getElementById('auth-section').style.display = 'flex';
+            showRegStep(1); // Go straight to payment step
         };
 
         // --- AUTH UI HANDLERS ---
@@ -1210,7 +1321,7 @@
             document.getElementById('colYearlyOnline').innerText = '₱' + yOnline.toLocaleString();
         };
 
-        // --- UPDATED RENDER ALL FUNCTION ---
+        // --- UPDATED RENDER ALL FUNCTION (INCLUDES NOTIFICATION UPDATE) ---
         window.renderAll = () => {
             const tbody = document.getElementById('utangListBody');
             let rowsHtml = '';
@@ -1268,7 +1379,7 @@
 
             renderCollectionStats();
             renderCharts(totalRec, totalCol, totalCap);
-            window.checkUnpaidToday();
+            window.checkUnpaidToday(); // This updates the notification badge
         };
 
         window.openProfile = (id) => {
@@ -1423,7 +1534,7 @@
             doc.save("LendingMaster_Report.pdf");
         }
 
-        // --- NOTIFICATION LOGIC ---
+        // --- UPDATED NOTIFICATION LOGIC (RENEWAL + UNPAID) ---
         window.checkUnpaidToday = () => {
             const now = new Date();
             const year = now.getFullYear();
@@ -1431,6 +1542,7 @@
             const day = String(now.getDate()).padStart(2, '0');
             const todayStr = `${year}-${month}-${day}`;
 
+            // Unpaid Logic
             const unpaidList = loanData.filter(loan => {
                 if (loan.balance <= 0) return false;
                 const hasPaidToday = (loan.payments || []).some(p => 
@@ -1438,12 +1550,17 @@
                 );
                 return !hasPaidToday;
             });
+            
+            // Renewal Logic (Balance <= 1000 and > 0)
+            const renewalList = loanData.filter(loan => loan.balance > 0 && loan.balance <= 1000);
+
+            const totalNotifs = unpaidList.length + renewalList.length;
 
             const badge = document.getElementById('notif-badge');
             const bellIcon = document.querySelector('.fa-bell');
 
-            if (unpaidList.length > 0) {
-                badge.innerText = unpaidList.length;
+            if (totalNotifs > 0) {
+                badge.innerText = totalNotifs;
                 badge.classList.remove('hidden');
                 bellIcon.classList.add('bell-ringing');
             } else {
@@ -1451,43 +1568,64 @@
                 bellIcon.classList.remove('bell-ringing');
             }
 
-            return unpaidList;
+            return { unpaidList, renewalList };
         };
 
-        // --- CLICKABLE & SCROLLABLE LIST ---
-        window.showUnpaidNotif = () => {
-            const list = window.checkUnpaidToday();
+        // --- UPDATED CLICKABLE & SCROLLABLE LIST ---
+        window.showNotifications = () => {
+            const { unpaidList, renewalList } = window.checkUnpaidToday();
 
-            if (list.length === 0) {
+            if (unpaidList.length === 0 && renewalList.length === 0) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'All Collected!',
-                    text: 'Lahat ng active borrowers ay nagbayad na today.',
+                    title: 'All Good!',
+                    text: 'No pending collections or renewals.',
                     background: '#161b2c',
                     color: 'white'
                 });
                 return;
             }
 
-            // Fixed Height (250px ~ 5 rows) + Click Handler
-            let htmlList = `<div class="text-start bg-dark p-2 rounded border border-secondary custom-scroll" style="max-height: 250px; overflow-y: auto;">`;
-            list.forEach(u => {
-                htmlList += `
-                    <div onclick="openProfile('${u.id}'); Swal.close();" class="unpaid-row d-flex justify-content-between align-items-center p-2">
-                        <span class="text-white fw-bold">${u.name}</span>
-                        <span class="text-danger small">Bal: ₱${u.balance.toLocaleString()}</span>
-                    </div>
-                `;
-            });
+            let htmlList = `<div class="notification-list-container custom-scroll">`;
+            
+            // Section: Renewals
+            if (renewalList.length > 0) {
+                htmlList += `<h6 class="text-warning sticky-top bg-dark py-2 mb-0 border-bottom border-warning"><i class="fas fa-gift me-2"></i>Eligible for Renewal</h6>`;
+                renewalList.forEach(u => {
+                    htmlList += `
+                        <div onclick="openProfile('${u.id}'); Swal.close();" class="notif-item notif-renewal">
+                            <div>
+                                <div class="fw-bold text-white">${u.name}</div>
+                                <small class="text-muted">Balance: ₱${u.balance.toLocaleString()}</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-warning" style="font-size:0.7rem;">RENEW</button>
+                        </div>
+                    `;
+                });
+            }
+
+            // Section: Unpaid
+            if (unpaidList.length > 0) {
+                htmlList += `<h6 class="text-danger sticky-top bg-dark py-2 mt-3 mb-0 border-bottom border-danger"><i class="fas fa-exclamation-circle me-2"></i>Unpaid Today</h6>`;
+                unpaidList.forEach(u => {
+                    htmlList += `
+                        <div onclick="openProfile('${u.id}'); Swal.close();" class="notif-item notif-unpaid">
+                            <span class="text-white fw-bold">${u.name}</span>
+                            <span class="text-danger small">Bal: ₱${u.balance.toLocaleString()}</span>
+                        </div>
+                    `;
+                });
+            }
+            
             htmlList += `</div>`;
 
             Swal.fire({
-                title: `<strong>${list.length} Unpaid Today</strong>`,
+                title: `<strong>Notifications</strong>`,
                 html: htmlList,
-                icon: 'warning',
                 background: '#161b2c',
                 color: 'white',
-                confirmButtonText: 'Close'
+                showCloseButton: true,
+                showConfirmButton: false
             });
         };
     </script>
