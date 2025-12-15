@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LendingMaster Pro | Financial Suite v8.1 (Green Date)</title>
+    <title>LendingMaster Pro | Financial Suite v8.2 (With Notifs)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,14 +18,14 @@
     <style>
         /* --- CORE VARIABLES --- */
         :root {
-            --bg-dark: #0f111a;         
+            --bg-dark: #0f111a;          
             --bg-panel: #161b2c;        
             --bg-input: #1f2940;
             
-            --primary: #3b82f6;         
+            --primary: #3b82f6;          
             --primary-vibrant: #2563eb;
-            --text-main: #ffffff;      
-            --text-muted: #94a3b8;     
+            --text-main: #ffffff;       
+            --text-muted: #94a3b8;      
             
             --success: #10b981;
             --danger: #ef4444; 
@@ -77,6 +77,26 @@
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
+        }
+
+        /* --- NOTIFICATION ANIMATIONS --- */
+        .hover-opacity-100:hover { opacity: 1 !important; }
+        .transition { transition: all 0.3s ease; }
+
+        @keyframes bellShake {
+            0% { transform: rotate(0); }
+            15% { transform: rotate(5deg); }
+            30% { transform: rotate(-5deg); }
+            45% { transform: rotate(4deg); }
+            60% { transform: rotate(-4deg); }
+            75% { transform: rotate(2deg); }
+            85% { transform: rotate(-2deg); }
+            100% { transform: rotate(0); }
+        }
+
+        .bell-ringing {
+            animation: bellShake 2s infinite;
+            color: var(--warning) !important;
         }
 
         /* --- LOGIN PAGE STYLING --- */
@@ -329,7 +349,17 @@
                 <a class="navbar-brand fw-bold text-white d-flex align-items-center" href="#">
                     <i class="fas fa-chart-pie text-primary me-2"></i> LendingMaster <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">PRO</span>
                 </a>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill px-4" onclick="handleLogout()">Logout</button>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <div class="position-relative" style="cursor: pointer;" onclick="showUnpaidNotif()">
+                        <i class="fas fa-bell fa-lg text-white opacity-75 hover-opacity-100 transition"></i>
+                        <span id="notif-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger hidden">
+                            0
+                        </span>
+                    </div>
+
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-4" onclick="handleLogout()">Logout</button>
+                </div>
             </div>
         </nav>
 
@@ -903,6 +933,9 @@
             // Run the dynamic filter calculator
             renderCollectionStats();
             renderCharts(totalRec, totalCol, totalCap);
+            
+            // Check Notifications
+            window.checkUnpaidToday();
         };
 
         window.openProfile = (id) => {
@@ -1032,6 +1065,72 @@
 
             doc.save("LendingMaster_Report.pdf");
         }
+
+        // --- NEW NOTIFICATION LOGIC ---
+        window.checkUnpaidToday = () => {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${day}`;
+
+            const unpaidList = loanData.filter(loan => {
+                if (loan.balance <= 0) return false;
+                const hasPaidToday = (loan.payments || []).some(p => 
+                    p.type === 'payment' && p.date === todayStr
+                );
+                return !hasPaidToday;
+            });
+
+            const badge = document.getElementById('notif-badge');
+            const bellIcon = document.querySelector('.fa-bell');
+
+            if (unpaidList.length > 0) {
+                badge.innerText = unpaidList.length;
+                badge.classList.remove('hidden');
+                bellIcon.classList.add('bell-ringing');
+            } else {
+                badge.classList.add('hidden');
+                bellIcon.classList.remove('bell-ringing');
+            }
+
+            return unpaidList;
+        };
+
+        window.showUnpaidNotif = () => {
+            const list = window.checkUnpaidToday();
+
+            if (list.length === 0) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'All Collected!',
+                    text: 'Lahat ng active borrowers ay nagbayad na today.',
+                    background: '#161b2c',
+                    color: 'white'
+                });
+                return;
+            }
+
+            let htmlList = `<div class="text-start bg-dark p-3 rounded border border-secondary">`;
+            list.forEach(u => {
+                htmlList += `
+                    <div class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+                        <span class="text-white fw-bold">${u.name}</span>
+                        <span class="text-danger small">Bal: ₱${u.balance.toLocaleString()}</span>
+                    </div>
+                `;
+            });
+            htmlList += `</div>`;
+
+            Swal.fire({
+                title: `<strong>${list.length} Unpaid Today</strong>`,
+                html: htmlList,
+                icon: 'warning',
+                background: '#161b2c',
+                color: 'white',
+                confirmButtonText: 'Got it'
+            });
+        };
     </script>
 </body>
 </html>
