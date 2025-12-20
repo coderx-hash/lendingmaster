@@ -605,10 +605,10 @@
                 <div class="col-md-4 col-12">
                     <label class="filter-label">Filter Daily</label>
                     <input type="date" id="filterDayInput" class="form-control mb-2 text-center" onchange="renderCollectionStats()">
-                    <div class="stat-card border-info">
+                    <div class="stat-card border-info" onclick="showDailyBreakdown()" style="cursor: pointer; transition: transform 0.2s;" title="Click to view details">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <div>
-                                <div class="stat-label text-info">Daily Total</div>
+                                <div class="stat-label text-info">Daily Total (Click Me)</div>
                                 <div class="stat-value text-white" id="colDaily">₱0</div>
                             </div>
                             <i class="fas fa-calendar-day fa-2x text-info opacity-25"></i>
@@ -1324,6 +1324,60 @@
             document.getElementById('colYearly').innerText = '₱' + yTotal.toLocaleString();
             document.getElementById('colYearlyCash').innerText = '₱' + yCash.toLocaleString();
             document.getElementById('colYearlyOnline').innerText = '₱' + yOnline.toLocaleString();
+        };
+
+        // --- NEW FUNCTION: SHOW DAILY BREAKDOWN POPUP ---
+        window.showDailyBreakdown = () => {
+            const filterDay = document.getElementById('filterDayInput').value;
+            if(!filterDay) return;
+
+            // Gather data for that day
+            let list = [];
+            loanData.forEach(loan => {
+                if(loan.payments) {
+                    loan.payments.forEach(p => {
+                        if(p.type === 'payment' && p.date === filterDay) {
+                            list.push({name: loan.name, amount: p.amount, method: p.method});
+                        }
+                    });
+                }
+            });
+
+            if(list.length === 0) {
+                Swal.fire({
+                    title: 'No Collections',
+                    text: 'No payments found for this date.',
+                    icon: 'info',
+                    background: '#161b2c',
+                    color: 'white'
+                });
+                return;
+            }
+
+            // Build HTML List for SweetAlert
+            let html = '<div class="text-start" style="max-height: 300px; overflow-y: auto;">';
+            list.forEach(item => {
+                const methodBadge = item.method === 'online' ? '<span class="badge bg-primary">GCash</span>' : '<span class="badge bg-success">Cash</span>';
+                html += `
+                    <div class="d-flex justify-content-between align-items-center border-bottom border-secondary py-2">
+                        <span class="text-white fw-bold">${item.name}</span>
+                        <div>
+                            ${methodBadge}
+                            <span class="text-warning fw-bold ms-2">₱${item.amount.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            Swal.fire({
+                title: `Collections: ${window.formatDate(filterDay)}`,
+                html: html,
+                background: '#161b2c',
+                color: 'white',
+                showCloseButton: true,
+                showConfirmButton: false
+            });
         };
 
         // --- UPDATED RENDER ALL FUNCTION (INCLUDES NOTIFICATION UPDATE) ---
